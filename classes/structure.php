@@ -24,9 +24,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class structure extends type_base {
 
-    /** @var float the gregorian epoch */
-    private $gregorianepoch = 1721425.5;
-
     /**
      * Returns the name of the calendar.
      *
