@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Version details.
+ *
+ * @package calendartype_jewish
+ * @copyright 2019 OpenApp ISRAEL LTD. by Yedidia Klein
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 namespace calendartype_jewish;
 use core_calendar\type_base;
