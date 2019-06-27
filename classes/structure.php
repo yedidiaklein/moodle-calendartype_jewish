@@ -346,6 +346,13 @@ class structure extends type_base {
             $niceyear = $hdate['year'];
             $niceday = (($hdate['mday'] < 10 && !$fixday) ? '0' : '') . $hdate['mday'];
         }
+        $nicemonth = $hdate['month'];
+        if ($hdate['month'] == get_string('month7', 'calendartype_jewish')) {
+            if (!($this->isjewishleapyear($hdate['year']))) {
+                $explodedadar = explode(' ', $hdate['month']);
+                $nicemonth = $explodedadar[0];
+            }
+        }
         // This is not sufficient code, change it. But it works correctly.
         $format = str_replace(array(
             '%a',
@@ -364,10 +371,10 @@ class structure extends type_base {
             $hdate['weekday'],                                                  // For %a
             $hdate['weekday'],                                                  // %A
             $niceday,                                                           // %d
-            $hdate['month'],                                                    // %b
-            $hdate['month'],                                                    // %B
-            $hdate['month'],                                                    // %h
-            ($hdate['mon'] < 10 ? '0' : '') . $hdate['mon'],                    // %m
+            $nicemonth,                                                         // %b
+            $nicemonth,                                                         // %B
+            $nicemonth,                                                         // %h
+            $nicemonth,                                                         // %m
             floor($hdate['year'] / 100),                                        // %C
             $hdate['year'] % 100,                                               // %y
             $niceyear,                                                          // %Y
