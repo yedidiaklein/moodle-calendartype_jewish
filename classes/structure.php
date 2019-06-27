@@ -60,7 +60,7 @@ class structure extends type_base {
         $days = array();
 
         for ($i = 1; $i <= 30; $i++) {
-            $days[$i] = $i;
+            $days[$i] = $this->gimatria($i);
         }
 
         return $days;
@@ -93,7 +93,7 @@ class structure extends type_base {
      * @return int The maximum year
      */
     public function get_max_year() {
-        return 5800;
+        return 5900;
     }
 
     /**
@@ -114,7 +114,8 @@ class structure extends type_base {
 
         $years = array();
         for ($i = $minyear; $i <= $maxyear; $i++) {
-            $years[$i] = $i;
+            // The "he alafim" isn't needed so decreasing by 5000.
+            $years[$i] = $this->gimatria($i - 5000);
         }
 
         return $years;
@@ -252,7 +253,7 @@ class structure extends type_base {
      */
     public function get_prev_month($year, $month) {
         if (!($this->isjewishleapyear($year))) {
-            if ($month == 7) { // Nissan in a year that is not leap, decrease in 2.
+            if ($month == 7) { // Adar II in a year that is not leap, decrease in 2.
                 return array(5, $year);
             }
         }
@@ -274,7 +275,7 @@ class structure extends type_base {
      */
     public function get_next_month($year, $month) {
         if (!($this->isjewishleapyear($year))) {
-            if ($month == 5) { // Adar in a year that is not leap, increase in 2.
+            if ($month == 5) { // Shvat in a year that is not leap, increase in 2.
                 return array(7, $year);
             }
         }
@@ -487,4 +488,43 @@ class structure extends type_base {
             return false;
         }
     }
+
+    private function gimatria($n) {
+        mb_internal_encoding("UTF-8");
+        $p  = '';
+        if ($n % 1000 == 0) {
+            return gimatria ($n / 1000) . "' אלפים";
+        } else if ($n > 1000) {
+            return gimatria ($n / 1000) . "'" . gimatria ($n % 1000);
+        }
+        while ($n >= 400) {
+            $p .= "ת";
+            $n -= 400;
+        }
+        if ($n >= 100) {
+            $chr = "0קרש";
+            $p .= mb_substr($chr, floor($n / 100), 1);
+            $n = $n % 100;
+        }
+        if ($n >= 10) {
+            if ($n == 15 || $n == 16) {
+                $n -= 9;
+            }
+            if ($n / 10 > 0) {
+                $chr = "0טיכלמנסעפצ";
+                $p .= mb_substr($chr, floor($n / 10) + 1, 1);
+            }
+            $n = $n % 10;
+        }
+        if ($n > 0) {
+            $chr = "0אבגדהוזחט";
+            $p .= mb_substr($chr, $n, 1);
+        }
+
+        if (mb_strlen($p) > 1) {
+            $p = mb_substr($p, 0, -1) . '"' . mb_substr($p, -1);
+        }
+        return $p;
+    }
+
 }
