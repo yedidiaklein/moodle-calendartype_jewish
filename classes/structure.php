@@ -72,24 +72,9 @@ class structure extends type_base {
      * @return array the month names
      */
     public function get_months() {
-        // Do This on a "Meuberet" year like this year
-        // start from Rosh hashana 2018.
-        $rosh = 1536537600;
-        $now = $rosh;
-        $months = array();
-
-        for ($i = 1; $i <= 13; $i++) {
-            $gregorianmonth = date('n', $now);
-            $gregorianday = date('j', $now);
-            $gregorianyear = date('Y', $now);
-
-            $jddate = gregoriantojd($gregorianmonth, $gregorianday, $gregorianyear);
-
-            $months[] = jdmonthname($jddate, 4);
-
-            $now += (30 * 24 * 3600); // Add 30 days.
+        for ($i = 1; $i < 14; $i++) {
+            $months[$i] = get_string('month' . $i, 'calendartype_jewish');
         }
-
         return $months;
     }
 
