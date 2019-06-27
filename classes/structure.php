@@ -60,7 +60,11 @@ class structure extends type_base {
         $days = array();
 
         for ($i = 1; $i <= 30; $i++) {
-            $days[$i] = $this->gimatria($i);
+            if (current_language() == "he") {
+                $days[$i] = $this->gimatria($i);
+            } else {
+                $days[$i] = $i;
+            }
         }
 
         return $days;
@@ -114,7 +118,11 @@ class structure extends type_base {
 
         $years = array();
         for ($i = $minyear; $i <= $maxyear; $i++) {
-            $years[$i] = $this->gimatria($i);
+            if (current_language() == "he") {
+                $years[$i] = $this->gimatria($i);
+            } else {
+                $years[$i] = $i;
+            }
         }
 
         return $years;
@@ -132,10 +140,15 @@ class structure extends type_base {
      */
     public function get_date_order($minyear = null, $maxyear = null) {
         $dateinfo = array();
-        $dateinfo['day'] = $this->get_days();
-        $dateinfo['month'] = $this->get_months();
-        $dateinfo['year'] = $this->get_years($minyear, $maxyear);
-
+        if (get_string('thisdirection', 'langconfig') == "rtl") {
+            $dateinfo['year'] = $this->get_years($minyear, $maxyear);
+            $dateinfo['month'] = $this->get_months();
+            $dateinfo['day'] = $this->get_days();
+        } else {
+            $dateinfo['day'] = $this->get_days();
+            $dateinfo['month'] = $this->get_months();
+            $dateinfo['year'] = $this->get_years($minyear, $maxyear);
+        }
         return $dateinfo;
     }
 
@@ -485,7 +498,6 @@ class structure extends type_base {
      * @param int $year Jewish Year.
      * @return boolean True if it's leap and false if it isn't.
      */
-
     private function isjewishleapyear($year) {
         if ($year % 19 == 0 || $year % 19 == 3 || $year % 19 == 6 ||
             $year % 19 == 8 || $year % 19 == 11 || $year % 19 == 14 ||
@@ -496,7 +508,14 @@ class structure extends type_base {
         }
     }
 
-    public function gimatria($n) {
+    /**
+     * Translate numbers to hebrew letters.
+     * Based on "gimatria"
+     *
+     * @param int $n number.
+     * @return string hebrew letters representation of this number.
+     */
+    private function gimatria($n) {
         mb_internal_encoding("UTF-8");
         $p  = '';
         if ($n % 1000 == 0) {
