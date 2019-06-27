@@ -114,8 +114,7 @@ class structure extends type_base {
 
         $years = array();
         for ($i = $minyear; $i <= $maxyear; $i++) {
-            // The "he alafim" isn't needed so decreasing by 5000.
-            $years[$i] = $this->gimatria($i - 5000);
+            $years[$i] = $this->gimatria($i);
         }
 
         return $years;
@@ -326,6 +325,14 @@ class structure extends type_base {
         }
 
         $hdate = $this->timestamp_to_date_array($time, $timezone);
+        // Get year in hebrew letters if language is he.
+        if (current_language() == "he") {
+            $niceyear = $this->gimatria($hdate['year']);
+            $niceday = $this->gimatria($hdate['mday']);
+        } else {
+            $niceyear = $hdate['year'];
+            $niceday = (($hdate['mday'] < 10 && !$fixday) ? '0' : '') . $hdate['mday'];
+        }
         // This is not sufficient code, change it. But it works correctly.
         $format = str_replace(array(
             '%a',
@@ -343,14 +350,14 @@ class structure extends type_base {
         ), array(
             $hdate['weekday'],                                                  // For %a
             $hdate['weekday'],                                                  // %A
-            (($hdate['mday'] < 10 && !$fixday) ? '0' : '') . $hdate['mday'],    // %d
+            $niceday,                                                           // %d
             $hdate['month'],                                                    // %b
             $hdate['month'],                                                    // %B
             $hdate['month'],                                                    // %h
             ($hdate['mon'] < 10 ? '0' : '') . $hdate['mon'],                    // %m
             floor($hdate['year'] / 100),                                        // %C
             $hdate['year'] % 100,                                               // %y
-            $hdate['year'],                                                     // %Y
+            $niceyear,                                                          // %Y
             ($hdate['hours'] < 12 ? $amcapsstring : $pmcapsstring),             // %p
             ($hdate['hours'] < 12 ? $amstring : $pmstring)                      // and %P.
         ), $format);
@@ -439,9 +446,9 @@ class structure extends type_base {
      * @return array the Jewish date
      */
     private function jd_to_jewish($jd) {
-        $hebredate = jdtojewish($jd);
+        $hebrewdate = jdtojewish($jd);
         $date = array();
-        list($date['month'], $date['day'], $date['year']) = explode('/', $hebredate);
+        list($date['month'], $date['day'], $date['year']) = explode('/', $hebrewdate);
         return $date;
     }
 
@@ -489,13 +496,13 @@ class structure extends type_base {
         }
     }
 
-    private function gimatria($n) {
+    public function gimatria($n) {
         mb_internal_encoding("UTF-8");
         $p  = '';
         if ($n % 1000 == 0) {
-            return gimatria ($n / 1000) . "' אלפים";
+            return $this->gimatria($n / 1000) . "' אלפים";
         } else if ($n > 1000) {
-            return gimatria ($n / 1000) . "'" . gimatria ($n % 1000);
+            return $this->gimatria ($n / 1000) . "'" . $this->gimatria ($n % 1000);
         }
         while ($n >= 400) {
             $p .= "ת";
