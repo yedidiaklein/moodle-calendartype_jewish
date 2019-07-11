@@ -346,7 +346,6 @@ class structure extends type_base {
             $niceyear = $hdate['year'];
             $niceday = (($hdate['mday'] < 10 && !$fixday) ? '0' : '') . $hdate['mday'];
         }
-        $niceday = $this->gimatria($hdate['mday']);
         $nicemonth = $hdate['month'];
         if ($hdate['month'] == get_string('month7', 'calendartype_jewish')) {
             if (!($this->isjewishleapyear($hdate['year']))) {
@@ -406,12 +405,7 @@ class structure extends type_base {
         $date['yday'] = ($hdate['month'] - 1) * 29 + intval($hdate['month'] / 2) + $hdate['day'];
         $date['year'] = $hdate['year'];
         $date['mon'] = $hdate['month'];
-        if (current_language() == "he") {
-            $date['mday'] = $this->gimatria($hdate['day']);
-        } else {
-            $date['mday'] = $hdate['day'];
-        }
-        // Show hebrew letters in any languages, (the if will be deleted later).
+        // Show hebrew letters for day.
         $date['mday'] = $this->gimatria($hdate['day']);
         return $date;
     }
