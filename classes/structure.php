@@ -397,7 +397,6 @@ class structure extends type_base {
      */
     public function timestamp_to_date_array($time, $timezone = 99) {
         $gregoriancalendar = type_factory::get_calendar_instance('gregorian');
-
         $date = $gregoriancalendar->timestamp_to_date_array($time, $timezone);
         $hdate = $this->convert_from_gregorian($date['year'], $date['mon'], $date['mday']);
 
@@ -406,8 +405,11 @@ class structure extends type_base {
         $date['yday'] = ($hdate['month'] - 1) * 29 + intval($hdate['month'] / 2) + $hdate['day'];
         $date['year'] = $hdate['year'];
         $date['mon'] = $hdate['month'];
-        $date['mday'] = $hdate['day'];
-
+        if (current_language() == "he") {
+            $date['mday'] = $this->gimatria($hdate['day']);
+        } else {
+            $date['mday'] = $hdate['day'];
+        }
         return $date;
     }
 
@@ -442,6 +444,40 @@ class structure extends type_base {
      * @return array the converted date
      */
     public function convert_to_gregorian($year, $month, $day, $hour = 0, $minute = 0) {
+        $num['א'] = 1;
+        $num['ב'] = 2;
+        $num['ג'] = 3;
+        $num['ד'] = 4;
+        $num['ה'] = 5;
+        $num['ו'] = 6;
+        $num['ז'] = 7;
+        $num['ח'] = 8;
+        $num['ט'] = 9;
+        $num['י'] = 10;
+        $num['י"א'] = 11;
+        $num['י"ב'] = 12;
+        $num['י"ג'] = 13;
+        $num['י"ד'] = 14;
+        $num['ט"ו'] = 15;
+        $num['ט"ז'] = 16;
+        $num['י"ז'] = 17;
+        $num['י"ח'] = 18;
+        $num['י"ט'] = 19;
+        $num['כ'] = 20;
+        $num['כ"א'] = 21;
+        $num['כ"ב'] = 22;
+        $num['כ"ג'] = 23;
+        $num['כ"ד'] = 24;
+        $num['כ"ה'] = 25;
+        $num['כ"ו'] = 26;
+        $num['כ"ז'] = 27;
+        $num['כ"ח'] = 28;
+        $num['כ"ט'] = 28;
+        $num['ל'] = 30;
+
+        if (!is_numeric($day)) {
+            $day = $num[$day];
+        }
         $jd = jewishtojd($month, $day, $year);
         $date = $this->jd_to_gregorian($jd);
         $date['hour'] = $hour;
@@ -523,6 +559,9 @@ class structure extends type_base {
      * @return string hebrew letters representation of this number.
      */
     private function gimatria($n) {
+        if (!is_numeric($n)) {
+            return $n;
+        }
         mb_internal_encoding("UTF-8");
         $p  = '';
         if ($n % 1000 == 0) {
